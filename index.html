@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swad Sutra | Menu</title>
+    <link rel="icon" href="Images/logo.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary: #e63946;
+            --secondary: #f1faee;
+            --accent: #a8dadc;
+            --dark: #1d3557;
+            --light: #f8f9fa;
+            --success: #2a9d8f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background-color: #b67900;
+
+
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+
+        header:hover {
+            transform: translateY(0);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .menu-item {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        display: flex;               /* Add this */
+        flex-direction: column;      /* Add this */
+        height: 100%;               /* Add this */
+    }
+
+
+        .menu-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .menu-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 3px solid var(--primary);
+        }
+        .menu-item-content {
+        padding: 20px;
+        flex-grow: 1;               /* Makes this section expand */
+    }
+
+        .menu-item h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .menu-item p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-weight: bold;
+            font-size: 1.3rem;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 15px;
+             min-height: 1.5em; /* Add this line */
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .quantity-control label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .quantity-control input {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .item-total {
+    font-weight: bold;
+    text-align: center;
+    padding: 12px;
+    background: linear-gradient(135deg, #1d3557, #457b9d);
+    color: white;
+    border: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+
+/* Hover effect */
+.menu-item:hover .item-total {
+    background: linear-gradient(135deg, #e63946, #d62839);
+    transform: translateY(0);
+}
+
+        .order-summary {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .order-summary h2 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .customer-info {
+            margin-bottom: 20px;
+        }
+
+        .customer-info label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .customer-info input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .customer-info input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .total-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed #ddd;
+        }
+
+        .total-section h3 {
+            color: var(--dark);
+            font-size: 1.3rem;
+        }
+
+        .total-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #d62839;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(230, 57, 70, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--dark);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #14213d;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(29, 53, 87, 0.3);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #248277;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(42, 157, 143, 0.3);
+        }
+
+        .ordered-items {
+            margin-top: 20px;
+        }
+
+        .ordered-items h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .ordered-items-list {
+            list-style: none;
+        }
+
+        .ordered-items-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .no-items {
+            color: #666;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Animation for buttons */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .btn:active {
+            animation: pulse 0.3s ease;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            header {
+                padding: 20px 0;
+            }
+
+            .menu-item img {
+                height: 150px;
+            }
+        }
+
+        /* Floating animation for menu items */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .menu-item:nth-child(odd) {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .menu-item:nth-child(even) {
+            animation: float 6s ease-in-out infinite 1s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Swad Sutra</h1>
+            <p>Har bite mein bharpoor desi swaad</p>
+        </header>
+
+        <div class="menu-grid" id="menuItems">
+            <!-- Menu items will be added here by JavaScript -->
+        </div>
+
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            
+            <div class="customer-info">
+                <label for="customerName">Customer Name</label>
+                <input type="text" id="customerName" placeholder="Enter your name">
+            </div>
+
+            <div class="customer-info">
+    <label for="customerPhone">Phone Number</label>
+    <input type="tel" id="customerPhone" placeholder="Enter your phone number" required>
+</div>
+            
+            <div class="ordered-items">
+                <h3>Your Order</h3>
+                <ul class="ordered-items-list" id="orderedItemsList">
+                    <li class="no-items">No items selected yet</li>
+                </ul>
+            </div>
+            
+            <div class="total-section">
+                <h3>Total Amount:</h3>
+                <div class="total-amount" id="totalAmount">₹0.00</div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="clearOrder">Clear Order</button>
+                <button class="btn btn-success" id="generateBill">Generate Bill</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+
+        // Menu data
+        // Menu data
+        const menuItems = [
+            {
+                id: 1,
+                name: "Butter Chicken",
+                description: "Tender chicken pieces simmered in a creamy tomato-based gravy, rich with butter and aromatic spices. A North Indian classic!      ",
+                price: 240.00,
+                image: "./Images/butter Chicken.jpg"
+            },
+            {
+                id: 2,
+                name: "Paneer Butter Masala",
+                description: "Soft paneer cubes cooked in a velvety, mildly spiced butter and tomato sauce. A favorite for all vegetarians.",
+                price: 200.00,
+                image: "./Images/paneerbutter.jpg"
+            },
+            {
+                id: 3,
+                name: "Chicken Biryani",
+                description: "Fragrant basmati rice layered with juicy chicken, saffron, and whole spices — slow-cooked to perfection in Dum style.",
+                price: 220.00,
+                image: "./Images/chickenbiri.jpg"
+            },
+            {
+                id: 4,
+                name: "Shahi Paneer",
+                description: "Royal dish of soft paneer in a rich, creamy cashew and cream gravy, delicately spiced with a touch of sweetness.",
+                price: 190.00,
+                image: "./Images/sahipaneer.jpg"
+            },
+            {
+                id: 5,
+                name: "Veg Manchurian",
+                description: "Crispy vegetable balls tossed in a flavorful Indo-Chinese sauce with garlic, soy, and spring onions. A crowd-pleasing starter.",
+                price: 120.00,
+                image: "./Images/Veg Manchurian.jpg"
+            },
+            {
+                id: 6,
+                name: "Garlic Naan",
+                description: "Soft, tandoor-baked flatbread brushed with garlic butter and coriander. The perfect companion for any curry.",
+                price: 50.00,
+                image: "./Images/Garlic Naan.jpg"
+            }
+        ];
+
+
+        // Current order
+        let currentOrder = {};
+
+        // DOM elements
+        const menuItemsContainer = document.getElementById('menuItems');
+        const orderedItemsList = document.getElementById('orderedItemsList');
+        const totalAmountElement = document.getElementById('totalAmount');
+        const customerNameInput = document.getElementById('customerName');
+        const clearOrderBtn = document.getElementById('clearOrder');
+        const generateBillBtn = document.getElementById('generateBill');
+
+        // Initialize the app
+        function init() {
+            renderMenuItems();
+            setupEventListeners();
+            updateOrderSummary();
+        }
+
+        // Render menu items
+        function renderMenuItems() {
+            menuItemsContainer.innerHTML = '';
+            
+            menuItems.forEach(item => {
+                const menuItemElement = document.createElement('div');
+                menuItemElement.className = 'menu-item';
+                menuItemElement.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="menu-item-content">
+                        <h3>${item.name}</h3>
+                        <p>${item.description}</p>
+                        <span class="price">₹${item.price.toFixed(2)}</span>
+                        <div class="quantity-control">
+                            <label for="quantity-${item.id}">Quantity:</label>
+                            <input type="number" id="quantity-${item.id}" min="0" value="0" data-id="${item.id}">
+                        </div>
+                    </div>
+                    <div class="item-total" id="item-total-${item.id}">₹0.00</div>
+                `;
+                menuItemsContainer.appendChild(menuItemElement);
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Quantity change events
+            document.querySelectorAll('[id^="quantity-"]').forEach(input => {
+                input.addEventListener('change', handleQuantityChange);
+                input.addEventListener('input', handleQuantityChange);
+            });
+
+            // Clear order button
+            clearOrderBtn.addEventListener('click', clearOrder);
+
+            // Generate bill button
+            generateBillBtn.addEventListener('click', generateBill);
+        }
+
+        // Handle quantity changes
+        function handleQuantityChange(e) {
+            const itemId = parseInt(e.target.dataset.id);
+            const quantity = parseInt(e.target.value);
+            
+            if (quantity < 0) {
+                e.target.value = 0;
+                return;
+            }
+            
+            const menuItem = menuItems.find(item => item.id === itemId);
+            
+            if (quantity === 0) {
+                delete currentOrder[itemId];
+            } else {
+                currentOrder[itemId] = {
+                    ...menuItem,
+                    quantity
+                };
+            }
+            
+            updateItemTotal(itemId);
+            updateOrderSummary();
+        }
+
+        // Update item total display
+        function updateItemTotal(itemId) {
+            const itemTotalElement = document.getElementById(`item-total-${itemId}`);
+            const quantityInput = document.getElementById(`quantity-${itemId}`);
+            const quantity = parseInt(quantityInput.value);
+            const menuItem = menuItems.find(item => item.id === itemId);
+            
+            if (quantity > 0) {
+                const total = (menuItem.price * quantity).toFixed(2);
+                itemTotalElement.textContent = `₹${total}`;
+            } else {
+                itemTotalElement.textContent = '₹0.00';
+            }
+        }
+
+        // Update order summary
+        function updateOrderSummary() {
+            const orderedItems = Object.values(currentOrder);
+            
+            if (orderedItems.length === 0) {
+                orderedItemsList.innerHTML = '<li class="no-items">No items selected yet</li>';
+            } else {
+                orderedItemsList.innerHTML = '';
+                orderedItems.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span>${item.quantity} x ${item.name}</span>
+                        <span>₹${(item.price * item.quantity).toFixed(2)}</span>
+                    `;
+                    orderedItemsList.appendChild(li);
+                });
+            }
+            
+            // Calculate total
+            const total = orderedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            totalAmountElement.textContent = `₹${total.toFixed(2)}`;
+        }
+
+        // Clear the current order
+        function clearOrder() {
+            currentOrder = {};
+            
+            // Reset all quantity inputs
+            document.querySelectorAll('[id^="quantity-"]').forEach(input => {
+                input.value = 0;
+                const itemId = parseInt(input.dataset.id);
+                document.getElementById(`item-total-${itemId}`).textContent = '₹0.00';
+            });
+            
+            // Reset customer name
+            customerNameInput.value = '';
+            
+            updateOrderSummary();
+            
+            // Add visual feedback
+            clearOrderBtn.classList.add('btn-pulse');
+            setTimeout(() => {
+                clearOrderBtn.classList.remove('btn-pulse');
+            }, 300);
+        }
+
+        //freespre
+        async function sendOrderToFormspree(customerName, orderedItems, total) {
+    const formSpreeEndpoint = "https://formspree.io/f/xgvypboj"; // Replace with your actual Formspree ID
+    
+    // Format ordered items for email
+    const itemsList = orderedItems.map(item => 
+        `${item.quantity} x ${item.name} - ₹${(item.price * item.quantity).toFixed(2)}`
+    ).join(',   '); // Using <br> for better email formatting
+
+    try {
+        const response = await fetch(formSpreeEndpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+             body: JSON.stringify({
+                subject: `New Order - ${customerName}`,
+                name: customerName,
+                phone: document.getElementById('customerPhone')?.value || 'Not provided',
+                order: itemsList,
+                total: `₹${total.toFixed(2)}`,
+                timestamp: new Date().toLocaleString()
+            })
+        });
+        
+        if (!response.ok) {
+            console.error('Failed to send order details');
+        } else {
+            console.log('Order details sent successfully');
+        }
+    } catch (error) {
+        console.error('Error sending order:', error);
+    }
+}
+
+        // Generate PDF bill
+        // MODIFY your existing generateBill function to include this at the beginning:
+async function generateBill() {
+    const orderedItems = Object.values(currentOrder);
+    
+    if (orderedItems.length === 0) {
+        alert('Please add items to your order before generating a bill.');
+        return;
+    }
+    
+    const customerName = customerNameInput.value.trim() || 'Guest';
+    const total = orderedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    // Send data to Formspree (add this line)
+    await sendOrderToFormspree(customerName, orderedItems, total);
+            
+            // Create HTML for the bill
+            const billHTML = `
+                <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
+                    <h1 style="text-align: center; color: #e63946; margin-bottom: 10px;">Swad Sutra</h1>
+                    <p style="text-align: center; margin-bottom: 30px;">788011 Irongmara, Near Assam University Silchar</p>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="border-bottom: 2px solid #e63946; padding-bottom: 5px; margin-bottom: 15px;">Customer Bill</h2>
+                        <p><strong>Customer Name:</strong> ${customerName}</p>
+                        <p><strong>Phone Number:</strong> ${document.getElementById('customerPhone').value || 'Not provided'}</p>
+                        <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                    </div>
+                    
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                        <thead>
+                            <tr style="background-color: #f1faee;">
+                                <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;">Item</th>
+                                <th style="text-align: right; padding: 10px; border-bottom: 1px solid #ddd;">Qty</th>
+                                <th style="text-align: right; padding: 10px; border-bottom: 1px solid #ddd;">Price</th>
+                                <th style="text-align: right; padding: 10px; border-bottom: 1px solid #ddd;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${orderedItems.map(item => `
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.name}</td>
+                                    <td style="text-align: right; padding: 10px; border-bottom: 1px solid #eee;">${item.quantity}</td>
+                                    <td style="text-align: right; padding: 10px; border-bottom: 1px solid #eee;">₹${item.price.toFixed(2)}</td>
+                                    <td style="text-align: right; padding: 10px; border-bottom: 1px solid #eee;">₹${(item.price * item.quantity).toFixed(2)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    
+                    <div style="text-align: right; font-size: 1.2em;">
+                        <p><strong>Total Amount: ₹${total.toFixed(2)}</strong></p>
+                    </div>
+                    
+                    <div style="margin-top: 40px; text-align: center; font-size: 0.9em; color: #666;">
+                        <p>Thank you for dining with us!</p>
+                        <p>Visit us again soon</p>
+                    </div>
+                </div>
+            `;
+            
+            // Create a temporary div to hold the bill HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = billHTML;
+            document.body.appendChild(tempDiv);
+            
+            // Use html2canvas to capture the bill as an image
+            html2canvas(tempDiv).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF();
+                
+                // Add the image to PDF
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save(`Bill_${customerName}_${new Date().toISOString().slice(0,10)}.pdf`);
+                
+                // Remove the temporary div
+                document.body.removeChild(tempDiv);
+                
+                // Add visual feedback
+                generateBillBtn.classList.add('btn-pulse');
+                setTimeout(() => {
+                    generateBillBtn.classList.remove('btn-pulse');
+                }, 300);
+            });
+        }
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
