@@ -367,6 +367,171 @@
         .menu-item:nth-child(even) {
             animation: float 6s ease-in-out infinite 1s;
         }
+        /* Add to your existing CSS */
+.success-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.success-content {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+@media (max-width: 768px) {
+    .success-content {
+        padding: 20px;
+    }
+}
+/* Mobile Optimization Styles */
+@media (max-width: 768px) {
+    /* General adjustments */
+    .container {
+        padding: 10px;
+    }
+
+    header {
+        padding: 20px 10px;
+    }
+
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    header p {
+        font-size: 1rem;
+    }
+
+    /* Menu grid adjustments */
+    .menu-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .menu-item {
+        margin-bottom: 10px;
+    }
+
+    .menu-item img {
+        height: 180px;
+    }
+
+    .menu-item-content {
+        padding: 15px;
+    }
+
+    /* Order summary adjustments */
+    .order-summary {
+        padding: 15px;
+    }
+
+    .customer-info input {
+        padding: 12px;
+    }
+
+    /* Buttons */
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    /* Success modal adjustments */
+    .success-content {
+        padding: 20px;
+        max-width: 95%;
+    }
+
+    /* Bill PDF optimizations */
+    .bill-pdf-container {
+        width: 100% !important;
+        padding: 10px !important;
+    }
+
+    /* Quantity controls */
+    .quantity-control input {
+        width: 50px;
+        padding: 8px 5px;
+    }
+}
+
+/* Very small devices (phones, 480px and down) */
+@media (max-width: 480px) {
+    .menu-item img {
+        height: 150px;
+    }
+
+    .price {
+        font-size: 1.2rem;
+    }
+
+    .item-total {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+
+    .success-content h3 {
+        font-size: 1.2rem;
+    }
+
+    .success-content p {
+        font-size: 0.9rem;
+    }
+
+    #closeSuccess {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Fix for iOS input zooming */
+@media screen and (max-width: 767px) {
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* Prevent zooming on input focus */
+@viewport {
+    width: device-width;
+    zoom: 1.0;
+    max-zoom: 1.0;
+    min-zoom: 1.0;
+    user-zoom: fixed;
+}
+
+/* Touch target sizing */
+button, [role="button"], input[type="submit"], input[type="reset"], input[type="button"] {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* PDF generation optimizations */
+@media (max-width: 768px) {
+    .bill-table {
+        font-size: 12px !important;
+    }
+    
+    .bill-table th, 
+    .bill-table td {
+        padding: 5px !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -407,7 +572,7 @@
             
             <div class="action-buttons">
                 <button class="btn btn-secondary" id="clearOrder">Clear Order</button>
-                <button class="btn btn-success" id="generateBill">Generate Bill</button>
+                <button class="btn btn-success" id="generateBill">Place Order</button>
             </div>
             
         </div>
@@ -519,7 +684,7 @@
             clearOrderBtn.addEventListener('click', clearOrder);
 
             // Generate bill button
-            generateBillBtn.addEventListener('click', generateBill);
+            generateBillBtn.addEventListener('click', placeOrder);
         }
 
         // Handle quantity changes
@@ -598,6 +763,7 @@
             
             // Reset customer name
             customerNameInput.value = '';
+            document.getElementById('customerPhone').value = '';
             
             updateOrderSummary();
             
@@ -607,6 +773,9 @@
                 clearOrderBtn.classList.remove('btn-pulse');
             }, 300);
         }
+
+        //success msg
+        
 
         //freespre
         async function sendOrderToFormspree(customerName, orderedItems, total) {
@@ -646,22 +815,28 @@
 
         // Generate PDF bill
         // MODIFY your existing generateBill function to include this at the beginning:
-async function generateBill() {
+async function placeOrder() {
     const orderedItems = Object.values(currentOrder);
+    const customerPhone = document.getElementById('customerPhone').value;
     
     if (orderedItems.length === 0) {
-        alert('Please add items to your order before generating a bill.');
+        alert('Please add items to your order before placing it.');
+        return;
+    }
+    
+    if (!customerPhone) {
+        alert('Please enter your phone number');
         return;
     }
     
     const customerName = customerNameInput.value.trim() || 'Guest';
     const total = orderedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     
-    // Send data to Formspree (add this line)
+    // Send data to Formspree
     await sendOrderToFormspree(customerName, orderedItems, total);
-            
-            // Create HTML for the bill
-            const billHTML = `
+    
+    // Generate bill HTML (keep your existing bill generation code)
+    const billHTML = `
                 <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
                     <h1 style="text-align: center; color: #e63946; margin-bottom: 10px;">Swad Sutra</h1>
                     <p style="text-align: center; margin-bottom: 30px;">788011 Irongmara, Near Assam University Silchar</p>
@@ -704,6 +879,78 @@ async function generateBill() {
                     </div>
                 </div>
             `;
+    
+    // Create PDF
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = billHTML;
+    document.body.appendChild(tempDiv);
+    
+    html2canvas(tempDiv).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF();
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        
+        // Save PDF
+        const fileName = `Bill_${customerName}_${new Date().toISOString().slice(0,10)}.pdf`;
+        pdf.save(fileName);
+        
+        // Show success message
+        showOrderSuccess(customerName);
+        
+        document.body.removeChild(tempDiv);
+    });
+}
+
+// Add this new function for success message
+function showOrderSuccess(customerName) {
+    const successDiv = document.createElement('div');
+    successDiv.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    `;
+    
+    successDiv.innerHTML = `
+        <div style="
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        ">
+            <h3 style="color: var(--success); margin-bottom: 15px;">Order Placed Successfully!</h3>
+            <p>Thank you, ${customerName}!</p>
+            <p>Your bill has been generated and should be in your downloads.</p>
+            <button id="closeSuccess" style="
+                background: var(--success);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                margin-top: 20px;
+                cursor: pointer;
+            ">OK</button>
+        </div>
+    `;
+    
+    document.body.appendChild(successDiv);
+    
+    document.getElementById('closeSuccess').addEventListener('click', () => {
+        document.body.removeChild(successDiv);
+    });
+
             
             // Create a temporary div to hold the bill HTML
             const tempDiv = document.createElement('div');
